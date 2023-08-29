@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.http import JsonResponse
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,6 +9,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from trequser.users.permission import ViewProfileWithJWTUserPermission
+from trequser.users.serializers import UserSerializer
 
 
 class JWTView(APIView):
@@ -32,6 +34,5 @@ class ProfileView(APIView):
     permission_classes = [ViewProfileWithJWTUserPermission]
 
     def get(self, request):
-        return Response(
-            {"first_name": request.user.first_name, "last_name": request.user.last_name}
-        )
+        serializer = UserSerializer(request.user)
+        return JsonResponse(serializer.data, safe=False)
